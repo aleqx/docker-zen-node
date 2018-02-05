@@ -106,7 +106,7 @@ server=1
 # Docker doesn't run as daemon
 daemon=0
 listen=1
-txindex=1
+#txindex=1
 logtimestamps=1
 ### testnet config
 testnet=$testnet
@@ -182,10 +182,10 @@ systemctl restart zen-secnodetracker
 print_status "Enabling basic firewall services..."
 ufw default allow outgoing
 ufw default deny incoming
-ufw allow ssh/tcp
-ufw limit ssh/tcp
-ufw allow http/tcp
-ufw allow https/tcp
+#ufw allow ssh/tcp
+#ufw limit ssh/tcp
+#ufw allow http/tcp
+#ufw allow https/tcp
 ufw allow 9033/tcp
 #ufw allow 19033/tcp
 ufw --force enable
