@@ -8,8 +8,8 @@ print_status() {
     echo
 }
 
-if [ $# -ne 4 ]; then
-    echo "Execution format ./install.sh stakeaddr email fqdn region (eu, na or sea)"
+if [[ $# -lt 4 ]]; then
+    echo "Execution format ./install.sh stakeaddr email fqdn region (eu, na or sea) [shieldaddrkey]"
     exit
 fi
 
@@ -18,6 +18,7 @@ stakeaddr=${1}
 email=${2}
 fqdn=${3}
 region=${4}
+shieldaddrkey=$5
 
 testnet=0
 rpcpassword=$(head -c 32 /dev/urandom | base64)
@@ -35,7 +36,7 @@ totalmem=$(free -m | awk '/^Mem:/{print $2}')
 totalswp=$(free -m | awk '/^Swap:/{print $2}')
 totalm=$(($totalmem + $totalswp))
 if [ $totalm -lt 4000 ]; then
-  print_status "Server memory is less then 4GB..."
+  print_status "Server memory is less than 4GB..."
   if ! grep -q '/swapfile' /etc/fstab ; then
     print_status "Creating a 4GB swapfile..."
     fallocate -l 4G /swapfile
@@ -202,14 +203,28 @@ do
 done
 
 if [[ $(docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_listaddresses | wc -l) -eq 2 ]]; then
-  print_status "Generating shield address for node... you will need to send 1 ZEN to this address:"
-  docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_getnewaddress
-
+  if [[ -n $shieldaddrkey ]]; then
+    print_status "Importing Z address private key (this may take several minutes!)"
+    docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_importkey $shieldaddrkey
+    print_status "Done. The available Z address is"
+    docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_listaddresses
+    print_status "With balance:"
+    docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_gettotalbalance
+  else
+    print_status "Generating shield address for node... you will need to send 4x 0.025 ZEN to this address:"
+    zaddr=`docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_getnewaddress`
+    echo $zaddr
+    print_status "Private key is:"
+    docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_exportkey $zaddr
+  fi
   print_status "Restarting secnodetracker"
   systemctl restart zen-secnodetracker
 else
-  print_status "Node already has shield address... you will need to send 1 ZEN to this address:"
+  print_status "Node already has shield address(es)..."
   docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_listaddresses
+  print_status "With total balance:"
+  docker exec -it zen-node /usr/local/bin/gosu user zen-cli z_gettotalbalance
+  print_status "You may want to send multiple small transactions to make up 0.1 ZEN to the above address."
 fi
 
 print_status "Install Finished"
