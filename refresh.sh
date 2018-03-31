@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # To install from web, do:
-#   curl https://raw.githubusercontent.com/aleqx/docker-zen-node/master/refresh.sh|INSTALL=1 bash
+#   curl -s https://raw.githubusercontent.com/aleqx/docker-zen-node/master/refresh.sh|INSTALL=1 bash
 #
 
 poll=30         # seconds, poll secure node logs every T seconds for the tracker reply
@@ -13,7 +13,7 @@ logkeep=1000
 
 [[ $INSTALL = 1 ]] && {
     echo "Installing in cron.d ..."
-    curl -o $sh "$url"
+    curl -s -o $sh "$url"
     echo "35 */6 * * *  root  bash $sh >> $log" > /etc/cron.d/zen-refresh
     exit
 }
