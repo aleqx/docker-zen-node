@@ -13,7 +13,7 @@ logkeep=1000
 
 [[ $INSTALL = 1 ]] && {
     echo "Installing in cron.d ..."
-    curl -s -o $sh "$url"
+    curl -o $sh "$url"
     echo "35 */6 * * *  root  bash $sh >> $log" > /etc/cron.d/zen-refresh
     exit
 }
