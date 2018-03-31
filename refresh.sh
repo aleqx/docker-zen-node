@@ -7,13 +7,19 @@
 poll=30         # seconds, poll secure node logs every T seconds for the tracker reply
 maxagochall=20  # hours, if last challenge was more than this many hours ago then quit (a challenge may be imminent)
 url="https://raw.githubusercontent.com/aleqx/docker-zen-node/master/refresh.sh"
+log=/root/zen-refresh.log
+sh=/root/zen-refresh.sh
+logkeep=1000
 
 [[ $INSTALL = 1 ]] && {
     echo "Installing in cron.d ..."
-    curl -s -o /root/zen-refresh.sh "$url"
-    echo "35 */6 * * *  root  bash /root/zen-refresh.sh >/dev/null" > /etc/cron.d/zen-refresh
+    curl -s -o /root/$sh "$url"
+    echo "35 */6 * * *  root  bash /root/$sh >>$log" > /etc/cron.d/zen-refresh
     exit
 }
+
+# truncate log
+[[ -f $log && `wc -l < $log` -ge $logkeep ]] && echo $(tail -n $logkeep $log) > $log
 
 #export TZ=`date +'%Z %z'`  # for converting times to current timezone
 # EDIT: it seems that `date -d STR` does convert to the current timezone as long as STR includes
@@ -26,7 +32,7 @@ lastchall=${lastchall/ -- *}
 lastchall=`date -d"$lastchall" +%s`
 agochall=$((`date +%s`-lastchall))
 
-echo "Last challenge was $((agochall/3600))h $(((agochall%3600)/60))m ago."
+echo "`date +'%F %T'` Last challenge was $((agochall/3600))h $(((agochall%3600)/60))m ago."
 
 [[ $agochall -gt $((maxagochall*3600)) ]] && exit  # don't restart if last challenge too long ago (likely imminent)
 
@@ -38,11 +44,11 @@ for ((i=600;i>0;i-=poll)); do
     #laststats=`date -d"$laststats" +%s`
     agostats=$((`date +%s`-`date -d"$laststats" +%s`))
     if [[ $agostats -gt 5 && $agostats -lt 75 ]]; then
-        echo "Last stats was at $laststats ($agostats seconds ago). Restarting zen node ..."
-        echo systemctl restart zen-node
-        break
+        echo "`date +'%F %T'` Last stats was at $laststats ($agostats seconds ago). Restarting zen node ..."
+        systemctl restart zen-node
+        exit
     else
-        echo "Last stats was at $laststats ($agostats seconds ago). Waiting ..."
+        echo "`date +'%F %T'` Last stats was at $laststats ($agostats seconds ago). Waiting ..."
     fi
     sleep $poll
 done
