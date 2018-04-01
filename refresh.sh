@@ -43,7 +43,7 @@ for ((i=600;i>0;i-=poll)); do
     laststats=${laststats/ -- *}
     #laststats=`date -d"$laststats" +%s`
     agostats=$((`date +%s`-`date -d"$laststats" +%s`))
-    if [[ $agostats -gt 5 && $agostats -lt 155 ]]; then
+    if [[ $agostats -gt 5 && $agostats -lt 95 ]]; then
         echo "`date +'%F %T'` Last stats was at $laststats ($agostats seconds ago). Restarting zen node ..."
         systemctl restart zen-node
         exit
