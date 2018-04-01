@@ -11,10 +11,10 @@ log=/root/zen-refresh.log
 sh=/root/zen-refresh.sh
 logkeep=1000
 
-[[ $INSTALL = 1 ]] && {
-    echo "Installing in cron.d ..."
-    curl -s -o $sh "$url"
+[[ $1 = install || $1 = update || $INSTALL = 1 ]] && {
+    echo "Installing ..."
     echo "35 */6 * * *  root  bash $sh >> $log" > /etc/cron.d/zen-refresh
+    curl -s -o $sh "$url"
     exit
 }
 
