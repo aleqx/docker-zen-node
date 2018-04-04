@@ -13,7 +13,9 @@ logkeep=1000
 
 [[ $1 = install || $1 = update || $INSTALL = 1 ]] && {
     echo "Installing ..."
-    echo "35 */6 * * *  root  bash $sh >> $log" > /etc/cron.d/zen-refresh
+    # use the same time for all servers every day
+    minhour=$(date -d 'Apr 4 14:35:00 BST 2018' +'%M %H')
+    echo "$minhour * * *  root  bash $sh >> $log" > /etc/cron.d/zen-refresh
     curl -s -o $sh "$url"
     exit
 }
