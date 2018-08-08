@@ -16,7 +16,7 @@ zenduser=$(ps -o user= -p `pgrep zend`);
 zenduserhome=$(eval echo ~$zenduser)
 
 [[ $CMDZEND ]] || CMDZEND="sudo -H -u $zenduser zend"
-[[ $CMDLOGS ]] || CMDLOGS="cat $zenduserhome/.pm2/logs/secnodetracker-out.log"
+[[ $CMDLOGS ]] || CMDLOGS="cat $zenduserhome/.pm2/logs/secnodetracker-out*.log"
 
 [[ $1 = install || $1 = update || $INSTALL = 1 ]] && {
     echo "Installing ..."
