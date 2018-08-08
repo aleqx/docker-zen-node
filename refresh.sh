@@ -12,7 +12,7 @@ log=/root/zen-refresh.log
 sh=/root/zen-refresh.sh
 logkeep=1000
 
-zenduser=$(ps -o user= -p `pgrep zend`);
+zenduser=$(ps -o user= -p `pgrep zend`)
 zenduserhome=$(eval echo ~$zenduser)
 
 [[ $CMDZEND ]] || CMDZEND="sudo -H -u $zenduser zend"
