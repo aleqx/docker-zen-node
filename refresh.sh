@@ -22,8 +22,8 @@ zenduserhome=$(eval echo ~$zenduser)
     echo "Installing ..."
     # use the same time for all servers every day
     minhour=$(date -d 'Apr 4 15:35:00 CEST 2018' +'%M %H')
-    echo "$minhour * * *  root  bash $sh >> $log" > /etc/cron.d/zen-refresh
-    curl -s -o $sh "$url"
+    curl -s -o $sh "$url" && \
+        echo "$minhour * * *  root  bash $sh >> $log" > /etc/cron.d/zen-refresh
     exit
 }
 
