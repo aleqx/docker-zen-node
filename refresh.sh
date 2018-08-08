@@ -11,9 +11,12 @@ url="https://raw.githubusercontent.com/aleqx/docker-zen-node/master/refresh.sh"
 log=/root/zen-refresh.log
 sh=/root/zen-refresh.sh
 logkeep=1000
-[[ $CMDZEND ]] || CMDZEND='sudo -H -u zen zend'
-[[ $CMDLOGS ]] || CMDLOGS='cat /home/zen/.pm2/logs/secnodetracker-out.log'
 
+zenduser=$(ps -o user= -p `pgrep zend`);
+zenduserhome=$(eval echo ~$zenduser)
+
+[[ $CMDZEND ]] || CMDZEND="sudo -H -u $zenduser zend"
+[[ $CMDLOGS ]] || CMDLOGS="cat $zenduserhome/.pm2/logs/secnodetracker-out.log"
 
 [[ $1 = install || $1 = update || $INSTALL = 1 ]] && {
     echo "Installing ..."
