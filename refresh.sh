@@ -5,7 +5,7 @@
 #
 
 poll=30         # seconds, poll secure node logs every T seconds for the tracker reply
-maxagochall=20  # hours, if last challenge was more than this many hours ago then quit (a challenge may be imminent)
+maxagochall=70  # hours, if last challenge was more than this many hours ago then quit (a challenge may be imminent)
 maxagopoll=95  # seconds, if last tracker poll was more than this many seconds then wait until next tracker poll
 url="https://raw.githubusercontent.com/aleqx/docker-zen-node/master/refresh.sh"
 log=/root/zen-refresh.log
