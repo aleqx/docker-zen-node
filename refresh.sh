@@ -23,7 +23,7 @@ zenduserhome=$(eval echo ~$zenduser)
     # use the same time for all servers every day
     minhour=$(date -d 'Apr 4 15:35:00 CEST 2018' +'%M %H')
     curl -s -o $sh "$url" && \
-        echo "$minhour * * *  root  bash $sh >> $log" > /etc/cron.d/zen-refresh
+        echo "$minhour * * 1  root  bash $sh >> $log" > /etc/cron.d/zen-refresh
     exit
 }
 
