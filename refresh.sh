@@ -18,6 +18,9 @@ zenduserhome=$(eval echo ~$zenduser)
 [[ $CMDZEND ]] || CMDZEND="sudo -H -u $zenduser zend"
 [[ $CMDLOGS ]] || CMDLOGS="cat $zenduserhome/.pm2/logs/secnodetracker-out*.log"
 
+$CMDLOGS &>/dev/null || { echo "Error reading logs: $CMDLOGS. Exiting ..."; exit; }
+$CMDZEND --help | grep -q rpcuser ||  { echo "Error executing: $CMDZEND. Exiting ..."; exit; }
+
 [[ $1 = install || $1 = update || $INSTALL = 1 ]] && {
     echo "Installing ..."
     # use the same time for all servers every day
