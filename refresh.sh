@@ -54,7 +54,7 @@ for ((i=600;i>0;i-=poll)); do
     agostats=$((`date +%s`-`date -d"$laststats" +%s`))
     if [[ $agostats -gt 5 && $agostats -lt $maxagopoll ]]; then
         echo "`date +'%F %T'` Last stats was at $laststats ($agostats seconds ago). Restarting zen node ..."
-        while pgrep zend; do killall zend; sleep 3; done
+        while pgrep zend &>/dev/null; do killall zend; sleep 3; done
         $CMDZEND -daemon
         exit
     else
